@@ -1,0 +1,67 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 64px - 4rem);
+    gap: 1.5rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.backBtn {
+    padding: 0.5rem;
+}
+
+.builderGrid {
+    display: grid;
+    grid-template-columns: 280px 1fr 320px;
+    gap: 1.5rem;
+    flex: 1;
+    min-height: 0;
+}
+
+.sidebar,
+.configPanel {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.canvasContainer {
+    background-color: var(--bg-card);
+    border: 1px dashed var(--border-color);
+    border-radius: var(--radius-xl);
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+}
+
+.emptyConfig {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}

@@ -1,0 +1,133 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    height: calc(100vh - 64px - 4rem);
+}
+
+.center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.titleGroup {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.backBtn {
+    padding: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    flex: 1;
+    min-height: 0;
+}
+
+.documentPreview {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.paper {
+    background-color: #ffffff;
+    color: #111111;
+    width: 100%;
+    max-width: 800px;
+    min-height: 842px;
+    /* A4 approx */
+    padding: 4rem;
+    box-shadow: var(--shadow-md);
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif;
+    line-height: 1.5;
+    font-size: 1.1rem;
+}
+
+.dataPanel {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto;
+}
+
+.dataPanel h3 {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.helpText {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.dataForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.dataGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.dataLabel {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+}
+
+.dataInput {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 0.5rem 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+}
+
+.dataInput:focus {
+    outline: none;
+    border-color: var(--accent-blue);
+}

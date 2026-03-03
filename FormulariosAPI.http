@@ -1,0 +1,18 @@
+@FormulariosAPI_HostAddress = http://localhost:5023
+
+GET {{FormulariosAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+### Login
+POST {{FormulariosAPI_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@example.com",
+    "password": "admin123"
+}
+
+### Get areas
+GET {{FormulariosAPI_HostAddress}}/api/areas
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiJiZjkyODBhNC1jM2NhLTRlODgtYmE5Zi05MWNlNzNiYTIyNjIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIiwicm9sZSI6IkFkbWluIiwibmJmIjoxNzcyMTg5MTc5LCJleHAiOjE3NzIxOTYzNzksImlhdCI6MTc3MjE4OTE3OSwiaXNzIjoiTXlBcHBBUEkiLCJhdWQiOiJNeUFwcENsaWVudHMifQ.zYQZOoCSbB0Z8WzwNbJ1-4MlOEcf3Y-STgDRNkRq2os
