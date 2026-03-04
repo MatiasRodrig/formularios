@@ -49,6 +49,19 @@ namespace FormulariosAPI.Services
             return MapToDto(form);
         }
 
+        public FormDto? Update(Guid id, FormCreateDto updateDto)
+        {
+            var form = _context.Forms.FirstOrDefault(f => f.Id == id);
+            if (form == null) return null;
+
+            form.Name = updateDto.Name;
+            form.SchemaJson = updateDto.SchemaJson;
+            form.AreaId = updateDto.AreaId;
+
+            _context.SaveChanges();
+            return MapToDto(form);
+        }
+
         public bool Publish(Guid id)
         {
             var form = _context.Forms.FirstOrDefault(f => f.Id == id);

@@ -19,6 +19,9 @@ const parseJwt = (token) => {
         if (identityName) {
             payload.username = identityName;
         }
+        // authStore.js — en la función parseJwt, agregar al final antes del return:
+        const nameIdentifier = payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+        if (nameIdentifier) payload.userId = nameIdentifier;
         return payload;
     } catch (e) {
         return null;
@@ -38,7 +41,8 @@ export const useAuthStore = create((set) => ({
             if (payload && payload.exp * 1000 > Date.now()) {
                 const role = payload.role || payload.Role;
                 const username = payload.username || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || payload.name || '';
-                set({ token, user: payload, role, username });
+                const userId = payload.userId || payload.nameid || payload.sub || null;
+                set({ token, user: payload, role, username, userId });
             } else {
                 localStorage.removeItem('token');
                 set({ token: null, user: null, role: null, username: null });
@@ -51,7 +55,8 @@ export const useAuthStore = create((set) => ({
         const payload = parseJwt(token) || {};
         const role = payload.role || payload.Role;
         const username = payload.username || payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'] || payload.name || '';
-        set({ token, user: payload, role, username });
+        const userId = payload.userId || payload.nameid || payload.sub || null;
+        set({ token, user: payload, role, username, userId });
     },
 
     logout: () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Type, Hash, AlignLeft, List, Calendar, CheckSquare, CircleDot } from 'lucide-react';
+import { Type, Hash, AlignLeft, List, Calendar, CheckSquare, CircleDot, Camera, Mic, Video, QrCode, ScanBarcode, Layers, MapPin } from 'lucide-react';
 import styles from './FieldPalette.module.css';
 
 const FIELD_TYPES = [
@@ -9,7 +9,14 @@ const FIELD_TYPES = [
     { type: 'select', label: 'Desplegable', icon: List },
     { type: 'date', label: 'Fecha', icon: Calendar },
     { type: 'checkbox', label: 'Casilla', icon: CheckSquare },
-    { type: 'radio', label: 'Opciones (Radio)', icon: CircleDot }
+    { type: 'radio', label: 'Opciones (Radio)', icon: CircleDot },
+    { type: 'photo', label: 'Foto', icon: Camera },
+    { type: 'audio', label: 'Audio', icon: Mic },
+    { type: 'video', label: 'Video', icon: Video },
+    { type: 'qr', label: 'Código QR', icon: QrCode },
+    { type: 'barcode', label: 'Código de Barras', icon: ScanBarcode },
+    { type: 'location', label: 'Ubicación', icon: MapPin },
+    { type: 'group', label: 'Grupo/Sección', icon: Layers }
 ];
 
 export const FieldPalette = () => {

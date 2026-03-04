@@ -65,3 +65,55 @@
     justify-content: center;
     height: 100%;
 }
+
+.headerActions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.formNameInput {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 1.25rem;
+    font-weight: 700;
+    font-family: var(--font-sans);
+    padding: 0.25rem 0.5rem;
+    outline: none;
+    min-width: 280px;
+    transition: border-color var(--transition-fast);
+}
+
+.formNameInput:focus {
+    border-bottom-color: var(--accent-blue);
+}
+
+.formNameInput::placeholder {
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.areaSelect {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+    min-width: 180px;
+}
+
+.areaSelect:focus {
+    border-color: var(--accent-blue);
+}
+
+.areaSelect option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}

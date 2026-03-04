@@ -47,6 +47,15 @@ namespace FormulariosAPI.Controllers
             return CreatedAtAction(nameof(GetById), new { id = form.Id }, form);
         }
 
+        [HttpPatch("{id}")]
+        [Authorize(Roles = "Admin,Manager")]
+        public ActionResult<FormDto> Update(Guid id, [FromBody] FormCreateDto dto)
+        {
+            var form = _formService.Update(id, dto);
+            if (form == null) return NotFound();
+            return Ok(form);
+        }
+
         [HttpPatch("{id}/publish")]
         [Authorize(Roles = "Admin,Manager")]
         public ActionResult Publish(Guid id)

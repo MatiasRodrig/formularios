@@ -91,6 +91,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles(); // Allow to serve /wwwroot contents for uploads
+
 app.UseCors("AllowFrontend");
 
 app.UseAuthentication();

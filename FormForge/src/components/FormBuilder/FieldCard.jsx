@@ -1,5 +1,5 @@
 import React from 'react';
-import { Type, Hash, AlignLeft, List, Calendar, CheckSquare, CircleDot, GripVertical, Trash2 } from 'lucide-react';
+import { Type, Hash, AlignLeft, List, Calendar, CheckSquare, CircleDot, GripVertical, Trash2, Camera, Mic, Video, QrCode, ScanBarcode, Layers, MapPin } from 'lucide-react';
 import { Badge } from '../ui/Badge/Badge';
 import { Button } from '../ui/Button/Button';
 import styles from './FieldCard.module.css';
@@ -13,6 +13,13 @@ const getIconForType = (type) => {
         case 'date': return Calendar;
         case 'checkbox': return CheckSquare;
         case 'radio': return CircleDot;
+        case 'photo': return Camera;
+        case 'audio': return Mic;
+        case 'video': return Video;
+        case 'qr': return QrCode;
+        case 'barcode': return ScanBarcode;
+        case 'location': return MapPin;
+        case 'group': return Layers;
         default: return Type;
     }
 };

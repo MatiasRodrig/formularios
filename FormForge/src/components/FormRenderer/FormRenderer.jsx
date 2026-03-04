@@ -1,6 +1,9 @@
 import React from 'react';
 import { Input, Textarea } from '../ui/Input/Input';
 import { Select } from '../ui/Select/Select';
+import { MediaField } from './MediaField';
+import { LocationField } from './LocationField';
+import { ScannerField } from './ScannerField';
 import styles from './FormRenderer.module.css';
 
 export const FormRenderer = ({ schema, values, onChange, errors = {} }) => {
@@ -88,6 +91,27 @@ export const FormRenderer = ({ schema, values, onChange, errors = {} }) => {
                             {commonProps.label}
                         </label>
                         {error && <span className={styles.errorText}>{error}</span>}
+                    </div>
+                );
+            case 'photo':
+            case 'audio':
+            case 'video':
+                return (
+                    <MediaField {...commonProps} type={field.type} value={value} onChange={(v) => handleChange(field.id, v)} />
+                );
+            case 'location':
+                return (
+                    <LocationField {...commonProps} value={value} onChange={(v) => handleChange(field.id, v)} />
+                );
+            case 'qr':
+            case 'barcode':
+                return (
+                    <ScannerField {...commonProps} type={field.type} value={value} onChange={(v) => handleChange(field.id, v)} />
+                );
+            case 'group':
+                return (
+                    <div style={{ padding: '1.5rem 0 0.5rem 0', borderBottom: '1px solid var(--border-color)', marginBottom: '-0.5rem' }}>
+                        <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary)' }}>{field.label}</h3>
                     </div>
                 );
             default:

@@ -11,6 +11,7 @@ namespace FormulariosAPI.Services.Interfaces
         IEnumerable<FormDto> GetByArea(Guid areaId);
         FormDto? GetById(Guid id);
         FormDto Create(FormCreateDto createDto);
+        FormDto? Update(Guid id, FormCreateDto updateDto);
         bool Publish(Guid id);
         bool Delete(Guid id);
     }

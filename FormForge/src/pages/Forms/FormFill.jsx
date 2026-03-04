@@ -1,3 +1,4 @@
+// FormFill.jsx — handleSubmit corregido
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { formsApi } from '../../api/formsApi';
@@ -6,18 +7,19 @@ import { FormRenderer } from '../../components/FormRenderer/FormRenderer';
 import { Button } from '../../components/ui/Button/Button';
 import { Spinner } from '../../components/ui/Spinner/Spinner';
 import { ArrowLeft, Send } from 'lucide-react';
+import { useAuthStore } from '../../store/authStore';
 import toast from 'react-hot-toast';
 import styles from './FormFill.module.css';
 
 export const FormFill = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useAuthStore();
 
     const [form, setForm] = useState(null);
     const [schema, setSchema] = useState(null);
     const [values, setValues] = useState({});
     const [errors, setErrors] = useState({});
-
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
 
@@ -27,10 +29,8 @@ export const FormFill = () => {
                 setLoading(true);
                 const data = await formsApi.getById(id);
                 setForm(data);
-                if (data.schemaJson) {
-                    setSchema(JSON.parse(data.schemaJson));
-                }
-            } catch (err) {
+                if (data.schemaJson) setSchema(JSON.parse(data.schemaJson));
+            } catch {
                 toast.error('Error al cargar el formulario');
             } finally {
                 setLoading(false);
@@ -41,14 +41,11 @@ export const FormFill = () => {
 
     const validate = () => {
         const newErrors = {};
-        const fields = schema?.fields || [];
-
-        fields.forEach((field) => {
+        (schema?.fields || []).forEach((field) => {
             if (field.required && !values[field.id]) {
                 newErrors[field.id] = 'Este campo es obligatorio';
             }
         });
-
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -60,28 +57,40 @@ export const FormFill = () => {
             return;
         }
 
+        // Extraer userId y areaId desde el JWT parseado
+        const userId =
+            user?.['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'] ||
+            user?.nameid ||
+            user?.sub ||
+            user?.UserId ||
+            null;
+
+        const areaId = user?.AreaId || user?.areaId || form?.areaId || form?.AreaId || null;
+
+        if (!userId || !areaId) {
+            toast.error('No se pudo identificar el usuario o área. Volvé a iniciar sesión.');
+            return;
+        }
+
         try {
             setSubmitting(true);
             await cargasApi.create({
                 formId: id,
-                data: JSON.stringify(values)
+                userId: userId,
+                areaId: areaId,
+                dataJson: JSON.stringify(values), // ← campo correcto según el DTO
             });
             toast.success('Formulario enviado correctamente');
-            navigate('/dashboard');
+            navigate('/cargas');
         } catch (error) {
             toast.error('Error al enviar el formulario');
+            console.error(error);
         } finally {
             setSubmitting(false);
         }
     };
 
-    if (loading) {
-        return (
-            <div className={styles.center}>
-                <Spinner size="lg" />
-            </div>
-        );
-    }
+    if (loading) return <div className={styles.center}><Spinner size="lg" /></div>;
 
     if (!form || !schema) {
         return (
@@ -99,20 +108,13 @@ export const FormFill = () => {
                     <ArrowLeft size={20} />
                 </Button>
                 <div>
-                    <h1 className={styles.title}>{form.name || form.title || 'Formulario'}</h1>
+                    <h1 className={styles.title}>{form.name || 'Formulario'}</h1>
                     <p className={styles.subtitle}>Complete los siguientes datos con atención.</p>
                 </div>
             </header>
-
             <div className={styles.paper}>
                 <form onSubmit={handleSubmit} className={styles.formContainer}>
-                    <FormRenderer
-                        schema={schema}
-                        values={values}
-                        onChange={setValues}
-                        errors={errors}
-                    />
-
+                    <FormRenderer schema={schema} values={values} onChange={setValues} errors={errors} />
                     <div className={styles.actions}>
                         <Button type="button" variant="ghost" onClick={() => navigate(-1)}>Cancelar</Button>
                         <Button type="submit" disabled={submitting}>

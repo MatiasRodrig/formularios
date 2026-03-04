@@ -16,11 +16,22 @@ export const Dashboard = () => {
         const fetchStats = async () => {
             try {
                 const data = await dashboardApi.getStats();
-                setStats(data);
+
+                // Si el backend devuelve 0 plantillas, complementar con localStorage
+                const localActas = JSON.parse(localStorage.getItem('actasTemplates') || '[]');
+                setStats({
+                    ...data,
+                    plantillasCount: data.plantillasCount > 0 ? data.plantillasCount : localActas.length,
+                });
             } catch (err) {
                 console.error('Error fetching dashboard stats:', err);
-                // Fallback to zeros on error
-                setStats({ formsCount: 0, cargasCount: 0, plantillasCount: 0, areasCount: 0 });
+                const localActas = JSON.parse(localStorage.getItem('actasTemplates') || '[]');
+                setStats({
+                    formsCount: 0,
+                    cargasCount: 0,
+                    plantillasCount: localActas.length,
+                    areasCount: 0,
+                });
             } finally {
                 setLoading(false);
             }
