@@ -8,13 +8,26 @@ import styles from './ActasList.module.css';
 
 export const ActasList = () => {
     const navigate = useNavigate();
-    const { role } = useAuthStore();
+    const { role, user } = useAuthStore();
     const [actas, setActas] = useState([]);
 
     useEffect(() => {
         const stored = JSON.parse(localStorage.getItem('actasTemplates') || '[]');
-        setActas(stored);
-    }, []);
+        if (role === 'Admin') {
+            setActas(stored);
+        } else if (role === 'Manager' && user?.AreaId) {
+            setActas(stored.filter(a => a.areaId === user.AreaId));
+        } else {
+            // Collector solo ve las de su área o ninguna si lo restringimos?
+            // Dice: manager solo debe poder editar plantillas y consultar... de su propia area.
+            // Si collector puede al menos ver/generar, también de su área
+            if (user?.AreaId) {
+                setActas(stored.filter(a => a.areaId === user.AreaId));
+            } else {
+                setActas([]);
+            }
+        }
+    }, [role, user]);
 
     const handleDelete = (id) => {
         if (!window.confirm('¿Está seguro que desea eliminar esta plantilla?')) return;
@@ -33,9 +46,11 @@ export const ActasList = () => {
                     <h1 className={styles.title}>Plantillas de Actas</h1>
                     <p className={styles.subtitle}>Gestione los documentos generables a partir de formularios.</p>
                 </div>
-                <Button onClick={() => navigate('/actas/new')}>
-                    <Plus size={18} /> Nueva Plantilla
-                </Button>
+                {canDelete && (
+                    <Button onClick={() => navigate('/actas/new')}>
+                        <Plus size={18} /> Nueva Plantilla
+                    </Button>
+                )}
             </header>
 
             {actas.length === 0 ? (
@@ -55,9 +70,11 @@ export const ActasList = () => {
                                 Formulario: {acta.formId || 'No vinculado'}
                             </p>
                             <div className={styles.cardActions}>
-                                <Button variant="ghost" onClick={() => navigate(`/actas/${acta.id}/edit`)}>
-                                    <FileEdit size={16} /> Editar
-                                </Button>
+                                {canDelete && (
+                                    <Button variant="ghost" onClick={() => navigate(`/actas/${acta.id}/edit`)}>
+                                        <FileEdit size={16} /> Editar
+                                    </Button>
+                                )}
                                 <Button variant="primary" onClick={() => navigate(`/actas/${acta.id}/preview`)}>
                                     <Eye size={16} /> Previsualizar
                                 </Button>

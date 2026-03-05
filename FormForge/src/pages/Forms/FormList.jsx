@@ -49,10 +49,12 @@ export const FormList = () => {
                     <h1 className={styles.title}>Formularios</h1>
                     <p className={styles.subtitle}>Gestione los formularios del sistema.</p>
                 </div>
-                <Button onClick={() => navigate('/forms/new')}>
-                    <Plus size={18} />
-                    Nuevo Formulario
-                </Button>
+                {(role === 'Admin' || role === 'Manager') && (
+                    <Button onClick={() => navigate('/forms/new')}>
+                        <Plus size={18} />
+                        Nuevo Formulario
+                    </Button>
+                )}
             </header>
 
             {loading ? (
@@ -75,7 +77,7 @@ export const FormList = () => {
                                     {form.published ? 'Publicado' : 'Borrador'}
                                 </Badge>
                             </div>
-                            <p className={styles.areaInfo}>Área ID: {form.areaId || 'General'}</p>
+                            <p className={styles.areaInfo}>Área: {form.areaName || 'General'}</p>
 
                             <div className={styles.cardActions}>
                                 {role === 'Admin' && (
@@ -83,9 +85,11 @@ export const FormList = () => {
                                         <Trash2 size={16} /> Eliminar
                                     </Button>
                                 )}
-                                <Button variant="ghost" onClick={() => navigate(`/forms/${form.id || form._id}/edit`)}>
-                                    <FileEdit size={16} /> Editar
-                                </Button>
+                                {(role === 'Admin' || role === 'Manager') && (
+                                    <Button variant="ghost" onClick={() => navigate(`/forms/${form.id || form._id}/edit`)}>
+                                        <FileEdit size={16} /> Editar
+                                    </Button>
+                                )}
                                 <Button variant="ghost" onClick={() => navigate(`/forms/${form.id || form._id}/responses`)}>
                                     <Eye size={16} /> Respuestas
                                 </Button>

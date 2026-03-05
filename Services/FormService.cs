@@ -5,6 +5,7 @@ using FormulariosAPI.Data;
 using FormulariosAPI.DTOs;
 using FormulariosAPI.Models;
 using FormulariosAPI.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace FormulariosAPI.Services
 {
@@ -19,18 +20,49 @@ namespace FormulariosAPI.Services
 
         public IEnumerable<FormDto> GetAll()
         {
-            return _context.Forms.Select(f => MapToDto(f)).ToList();
+            return _context.Forms
+                .Select(f => new FormDto
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    SchemaJson = f.SchemaJson,
+                    AreaId = f.AreaId,
+                    AreaName = f.Area != null ? f.Area.Name : "General",
+                    IsPublished = f.IsPublished
+                })
+                .ToList();
         }
 
         public IEnumerable<FormDto> GetByArea(Guid areaId)
         {
-            return _context.Forms.Where(f => f.AreaId == areaId).Select(f => MapToDto(f)).ToList();
+            return _context.Forms
+                .Where(f => f.AreaId == areaId)
+                .Select(f => new FormDto
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    SchemaJson = f.SchemaJson,
+                    AreaId = f.AreaId,
+                    AreaName = f.Area != null ? f.Area.Name : "General",
+                    IsPublished = f.IsPublished
+                })
+                .ToList();
         }
 
         public FormDto? GetById(Guid id)
         {
-            var form = _context.Forms.FirstOrDefault(f => f.Id == id);
-            return form == null ? null : MapToDto(form);
+            return _context.Forms
+                .Where(f => f.Id == id)
+                .Select(f => new FormDto
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    SchemaJson = f.SchemaJson,
+                    AreaId = f.AreaId,
+                    AreaName = f.Area != null ? f.Area.Name : "General",
+                    IsPublished = f.IsPublished
+                })
+                .FirstOrDefault();
         }
 
         public FormDto Create(FormCreateDto createDto)
@@ -46,7 +78,8 @@ namespace FormulariosAPI.Services
             _context.Forms.Add(form);
             _context.SaveChanges();
             
-            return MapToDto(form);
+            // Return with populated AreaName
+            return GetById(form.Id)!;
         }
 
         public FormDto? Update(Guid id, FormCreateDto updateDto)
@@ -59,7 +92,9 @@ namespace FormulariosAPI.Services
             form.AreaId = updateDto.AreaId;
 
             _context.SaveChanges();
-            return MapToDto(form);
+            
+            // Re-fetch to get Area Name and all relations
+            return GetById(id);
         }
 
         public bool Publish(Guid id)
@@ -77,6 +112,14 @@ namespace FormulariosAPI.Services
             var form = _context.Forms.FirstOrDefault(f => f.Id == id);
             if (form == null) return false;
             
+            var cargas = _context.Cargas.Where(c => c.FormId == id).ToList();
+            var cargaIds = cargas.Select(c => c.Id).ToList();
+            var adjuntos = _context.Adjuntos.Where(a => cargaIds.Contains(a.CargaId)).ToList();
+            var plantillas = _context.Plantillas.Where(p => p.FormId == id).ToList();
+            
+            _context.Adjuntos.RemoveRange(adjuntos);
+            _context.Cargas.RemoveRange(cargas);
+            _context.Plantillas.RemoveRange(plantillas);
             _context.Forms.Remove(form);
             _context.SaveChanges();
             return true;
@@ -90,6 +133,7 @@ namespace FormulariosAPI.Services
                 Name = f.Name,
                 SchemaJson = f.SchemaJson,
                 AreaId = f.AreaId,
+                AreaName = f.Area?.Name ?? (f.AreaId != Guid.Empty ? $"Área ({f.AreaId.ToString().Substring(0,8)})" : "General"),
                 IsPublished = f.IsPublished
             };
         }

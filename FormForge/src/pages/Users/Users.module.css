@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    height: 100%;
 }
 
 .header {
@@ -63,12 +64,45 @@
     transform: translateY(-1px);
 }
 
+.controlsRow {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    background: var(--bg-card);
+    padding: 1rem;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.filterGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+}
+
+.searchIcon {
+    position: absolute;
+    left: 0.75rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+}
+
+.filterGroup .input {
+    padding-left: 2.25rem;
+}
+
 /* Table */
 .tableWrapper {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
     border-radius: var(--radius-xl);
-    overflow: hidden;
+    overflow: auto;
+    flex: 1;
+    min-height: 0;
 }
 
 .table {
@@ -89,6 +123,10 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.06em;
+    position: sticky;
+    top: 0;
+    background: var(--bg-card);
+    z-index: 10;
 }
 
 .table td {
@@ -220,6 +258,26 @@
 .deleteBtn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.editBtn {
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    color: var(--accent-blue);
+    border-radius: var(--radius-md);
+    padding: 0.4rem 0.5rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.5rem;
+}
+
+.editBtn:hover:not(:disabled) {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.4);
+    transform: scale(1.05);
 }
 
 .emptyRow {

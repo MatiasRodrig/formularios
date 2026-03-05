@@ -1,7 +1,8 @@
 .layout {
     display: flex;
-    min-height: 100vh;
+    height: 100vh;
     width: 100%;
+    overflow: hidden;
 }
 
 .main {
@@ -9,19 +10,27 @@
     display: flex;
     flex-direction: column;
     margin-left: 260px;
-    /* Width of sidebar */
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
 }
 
 .content {
     flex: 1;
     padding: 2rem;
     background-color: var(--bg-dark);
-    overflow-y: auto;
+    overflow: hidden;
+    /* ← Sin scroll en la página, cada page maneja su propio scroll */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
 .container {
     max-width: 1280px;
     margin: 0 auto;
     width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }

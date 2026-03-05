@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("FormulariosAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a370b7e05feaeb7f9f5d496ab5694def6b5143af")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aac1de575958af5cdcb29681db6dbe7f04a86562")]
 [assembly: System.Reflection.AssemblyProductAttribute("FormulariosAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("FormulariosAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

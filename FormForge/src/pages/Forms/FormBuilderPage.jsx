@@ -51,8 +51,9 @@ export const FormBuilderPage = () => {
                 const data = await areasApi.getAll();
                 setAreas(data || []);
                 // Manager tiene área fija: preseleccionarla desde el token
-                if (role === 'Manager' && user?.AreaId) {
-                    setAreaId(user.AreaId);
+                if (role === 'Manager') {
+                    const managerAreaId = user?.AreaId || user?.areaId;
+                    if (managerAreaId) setAreaId(managerAreaId);
                 }
             } catch {
                 toast.error('Error al cargar áreas');
@@ -172,7 +173,9 @@ export const FormBuilderPage = () => {
                             >
                                 <option value="">Seleccionar área...</option>
                                 {areas.map((area) => (
-                                    <option key={area.id} value={area.id}>{area.name}</option>
+                                    <option key={area.id || area.Id} value={area.id || area.Id}>
+                                        {area.name || area.Name}
+                                    </option>
                                 ))}
                             </select>
                         )

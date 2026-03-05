@@ -32,7 +32,7 @@ namespace FormulariosAPI.Controllers
             if (role == "Admin" || string.IsNullOrEmpty(areaIdClaim))
             {
                 // Global access
-                formsCount = _context.Forms.Count(f => f.IsPublished);
+                formsCount = _context.Forms.Count();
                 cargasCount = _context.Cargas.Count();
                 areasCount = _context.Areas.Count();
                 plantillasCount = _context.Plantillas.Count();
@@ -41,7 +41,7 @@ namespace FormulariosAPI.Controllers
             {
                 // Area-filtered access
                 var areaId = System.Guid.Parse(areaIdClaim);
-                formsCount = _context.Forms.Count(f => f.IsPublished && f.AreaId == areaId);
+                formsCount = _context.Forms.Count(f => f.AreaId == areaId);
                 cargasCount = _context.Cargas.Count(c => c.AreaId == areaId);
                 areasCount = 1; // Only their area
                 plantillasCount = _context.Plantillas.Count();

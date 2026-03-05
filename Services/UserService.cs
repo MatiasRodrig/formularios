@@ -75,5 +75,37 @@ namespace FormulariosAPI.Services
             _context.SaveChanges();
             return true;
         }
+
+        public bool UpdatePassword(Guid userId, string newPassword)
+        {
+            var user = _context.Users.Find(userId);
+            if (user == null) return false;
+
+            user.PasswordHash = newPassword;
+            _context.SaveChanges();
+            return true;
+        }
+
+        public bool UpdateRoleArea(Guid userId, string? role, Guid? areaId)
+        {
+            var user = _context.Users.Find(userId);
+            if (user == null) return false;
+
+            if (!string.IsNullOrEmpty(role))
+            {
+                user.Role = role;
+            }
+            if (role != "Admin") 
+            {
+                user.AreaId = areaId;
+            } 
+            else 
+            {
+                user.AreaId = null;
+            }
+
+            _context.SaveChanges();
+            return true;
+        }
     }
 }

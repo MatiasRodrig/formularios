@@ -20,4 +20,15 @@ namespace FormulariosAPI.DTOs
         public string Role { get; set; } = "Collector";
         public Guid? AreaId { get; set; }
     }
+
+    public class UpdatePasswordDto
+    {
+        public string NewPassword { get; set; } = string.Empty;
+    }
+
+    public class UpdateUserRoleDto
+    {
+        public string Role { get; set; } = string.Empty;
+        public Guid? AreaId { get; set; }
+    }
 }

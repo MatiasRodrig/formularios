@@ -321,7 +321,7 @@ export const CargasList = () => {
                             <div key={f.id || f._id} className={styles.formCard}>
                                 <div className={styles.formCardHeader}>
                                     <h3 className={styles.formCardTitle}>{f.name}</h3>
-                                    <span className={styles.formCardMeta}>Creado en la plataforma general</span>
+                                    <span className={styles.formCardMeta}>Área: {f.areaName || 'General'}</span>
                                 </div>
                                 <div>
                                     <span className={styles.formCardBadge}>

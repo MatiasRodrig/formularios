@@ -9,6 +9,7 @@ namespace FormulariosAPI.DTOs
         public string SchemaJson { get; set; } = string.Empty;
         public bool IsPublished { get; set; }
         public Guid AreaId { get; set; }
+        public string AreaName { get; set; } = string.Empty;
     }
 
     public class FormCreateDto

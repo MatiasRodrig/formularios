@@ -1,9 +1,13 @@
+/* ── Contenedor principal: ocupa todo el espacio disponible sin scroll de página ── */
 .container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-    height: calc(100vh - 4rem);
+    gap: 1rem;
+    height: 100%;
+    /* Ocupa todo el espacio que el layout le da */
     overflow: hidden;
+    /* La página NO hace scroll */
+    min-height: 0;
 }
 
 .header {
@@ -11,6 +15,7 @@
     flex-direction: column;
     gap: 0.5rem;
     flex-shrink: 0;
+    /* El header no se encoge */
 }
 
 .title {
@@ -48,6 +53,44 @@
     color: var(--text-muted);
 }
 
+/* ── Toolbar: fijo, no hace scroll ── */
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    background-color: var(--bg-card);
+    padding: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    flex-shrink: 0;
+    /* La toolbar no se encoge */
+}
+
+.searchGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 250px;
+}
+
+.dateFilter {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dateInput {
+    background-color: var(--bg-body);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    font-size: 0.875rem;
+}
+
+/* ── Wrapper de la tabla: toma el espacio restante ── */
 .tableWrapper {
     background-color: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -56,11 +99,20 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    /* Take remaining height */
+    /* Ocupa todo el espacio vertical restante */
     min-height: 0;
-    /* Needed for reliable height shrinking in flex */
+    /* Necesario para que flex funcione correctamente */
 }
 
+/* ── Contenedor de la tabla: AQUÍ está el scroll (horizontal y vertical) ── */
+.tableContainer {
+    flex: 1;
+    overflow: auto;
+    /* ← Scroll horizontal Y vertical solo aquí */
+    min-height: 0;
+}
+
+/* ── La tabla en sí ── */
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -76,6 +128,10 @@
     letter-spacing: 0.05em;
     font-weight: 600;
     border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    /* Headers fijos al hacer scroll vertical */
+    top: 0;
+    z-index: 1;
 }
 
 .table td {
@@ -93,16 +149,52 @@
     background-color: rgba(255, 255, 255, 0.02);
 }
 
+.table th,
+.table td {
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Paginación: fija al fondo del tableWrapper ── */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--bg-card);
+    flex-shrink: 0;
+    /* La paginación no se encoge */
+}
+
+.paginationInfo {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.paginationControls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
 .mono {
     font-family: var(--font-mono);
     font-size: 0.75rem;
     color: var(--text-secondary);
 }
 
+/* ── Grid de formularios (vista 1) ── */
 .formsGrid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 1.5rem;
+    overflow-y: auto;
+    /* Scroll solo si hay muchas cards */
+    flex: 1;
+    min-height: 0;
 }
 
 .formCard {
@@ -114,6 +206,7 @@
     flex-direction: column;
     gap: 1rem;
     transition: all 0.2s ease;
+    height: fit-content;
 }
 
 .formCard:hover {
@@ -150,109 +243,7 @@
     color: var(--accent-blue);
 }
 
-.toolbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    align-items: center;
-    background-color: var(--bg-card);
-    padding: 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
-    flex-shrink: 0;
-}
-
-.searchGroup {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
-    min-width: 250px;
-}
-
-.dateFilter {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.dateInput {
-    background-color: var(--bg-body);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-    padding: 0.5rem;
-    border-radius: var(--radius-md);
-    font-size: 0.875rem;
-}
-
-.normalizedData {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.dataRow {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    border-bottom: 1px dashed var(--border-color);
-    padding-bottom: 0.75rem;
-}
-
-.dataRow:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-}
-
-.dataLabel {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.dataValue {
-    font-size: 0.9375rem;
-    color: var(--text-primary);
-    word-break: break-word;
-}
-
-.tableContainer {
-    flex: 1;
-    overflow: auto;
-    /* Both horizontal and vertical scrolling */
-}
-
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    border-top: 1px solid var(--border-color);
-    background-color: var(--bg-card);
-    flex-shrink: 0;
-}
-
-.paginationInfo {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-}
-
-.paginationControls {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
-
-.table th,
-.table td {
-    white-space: nowrap;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
+/* ── Modal ── */
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -301,4 +292,38 @@
 .modalActions {
     display: flex;
     justify-content: flex-end;
+}
+
+/* ── Datos normalizados (detalle modal) ── */
+.normalizedData {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.dataRow {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.dataRow:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.dataLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dataValue {
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    word-break: break-word;
 }
