@@ -18,13 +18,18 @@ namespace FormulariosAPI.Controllers
         [HttpPost("login")]
         public ActionResult Login([FromBody] LoginDto dto)
         {
-            var token = _authService.Login(dto);
-            if (token == null)
+            try
             {
-                return Unauthorized(new { message = "Credenciales incorrectas" });
-            }
+                var token = _authService.Login(dto);
+                if (token == null)
+                    return Unauthorized(new { message = "Credenciales incorrectas" });
 
-            return Ok(new { token });
+                return Ok(new { token });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         [HttpPost("register")]
