@@ -1,4 +1,4 @@
-@FormulariosAPI_HostAddress = http://localhost:5023
+@FormulariosAPI_HostAddress = http://192.168.27.113:5023
 
 GET {{FormulariosAPI_HostAddress}}/weatherforecast/
 Accept: application/json
@@ -8,8 +8,8 @@ POST {{FormulariosAPI_HostAddress}}/api/auth/login
 Content-Type: application/json
 
 {
-    "email": "admin@example.com",
-    "password": "admin123"
+    "userName": "admin",
+    "password": "123456"
 }
 
 ### Get areas
