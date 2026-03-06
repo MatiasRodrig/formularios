@@ -89,8 +89,10 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-app.UseExceptionHandler("/error"); // o simplemente:
+// ❌ Sacá esta línea:
+// app.UseExceptionHandler("/error");
 
+// ✅ Solo esto:
 app.Use(
     async (context, next) =>
     {
@@ -108,20 +110,15 @@ app.Use(
 
 app.UseCors("AllowFrontend");
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.MapScalarApiReference();
 }
 
-app.UseStaticFiles(); // Allow to serve /wwwroot contents for uploads
-
-// app.UseHttpsRedirection(); // Deshabilitado: la app corre en HTTP (no HTTPS)
-
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
