@@ -7,6 +7,7 @@ import { areasApi } from '../../api/areasApi';
 import { formsApi } from '../../api/formsApi';
 import { useAuthStore } from '../../store/authStore';
 import { Spinner } from '../../components/ui/Spinner/Spinner';
+import { generateUUID } from '../../utils/actaHelpers';
 import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from './ActaTemplateEditor.module.css';
@@ -152,7 +153,7 @@ export const ActaTemplateEditor = () => {
         } else {
             // Modo creación
             const newActa = {
-                id: crypto.randomUUID(),
+                id: generateUUID(),
                 name: name.trim(),
                 areaId,
                 areaName: selectedArea?.name || '',
