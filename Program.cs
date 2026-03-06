@@ -22,9 +22,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
+            policy.SetIsOriginAllowed(origin => true)
                   .AllowAnyHeader()
-                  .AllowAnyMethod();
+                  .AllowAnyMethod()
+                  .AllowCredentials();
         });
 });
 builder.Services.AddOpenApi(); // For OpenAPI / Swagger generation
@@ -89,11 +90,11 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
-
 app.UseStaticFiles(); // Allow to serve /wwwroot contents for uploads
 
 app.UseCors("AllowFrontend");
+
+// app.UseHttpsRedirection(); // Deshabilitado: la app corre en HTTP (no HTTPS)
 
 app.UseAuthentication();
 app.UseAuthorization();
