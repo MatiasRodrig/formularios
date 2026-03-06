@@ -9,6 +9,7 @@ import { formsApi } from '../../api/formsApi';
 import { areasApi } from '../../api/areasApi';
 import { useAuthStore } from '../../store/authStore';
 import { Spinner } from '../../components/ui/Spinner/Spinner';
+import { generateUUID } from '../../utils/actaHelpers';
 import toast from 'react-hot-toast';
 import styles from './FormBuilderPage.module.css';
 
@@ -67,7 +68,7 @@ export const FormBuilderPage = () => {
     const handleAddField = (fieldData) => {
         const newField = {
             ...fieldData,
-            id: crypto.randomUUID(),
+            id: generateUUID(),
             label: fieldData.label,
             variableName: `var_${Date.now()}`
         };
