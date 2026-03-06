@@ -9,41 +9,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
-using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(
-        "AllowFrontend",
-        policy =>
-        {
-            policy
-                .SetIsOriginAllowed(origin => true)
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials();
-        }
-    );
-});
-builder.Services.AddOpenApi(); // For OpenAPI / Swagger generation
+builder.Services.AddCors();
+
+builder.Services.AddOpenApi();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-// Register database-backed services as Scoped
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<ICargaService, CargaService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-// Configure JWT Authentication
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ClaveSuperSecretaDePrueba1234567890!!";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "MyAppAPI";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "MyAppClients";
@@ -58,7 +42,7 @@ builder
     })
     .AddJwtBearer(options =>
     {
-        options.RequireHttpsMetadata = false; // Set to true in prod
+        options.RequireHttpsMetadata = false;
         options.SaveToken = true;
         options.UseSecurityTokenValidators = true;
         options.TokenValidationParameters = new TokenValidationParameters
@@ -89,26 +73,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// ❌ Sacá esta línea:
-// app.UseExceptionHandler("/error");
-
-// ✅ Solo esto:
-app.Use(
-    async (context, next) =>
-    {
-        try
-        {
-            await next();
-        }
-        catch (Exception ex)
-        {
-            context.Response.StatusCode = 500;
-            await context.Response.WriteAsJsonAsync(new { message = ex.Message });
-        }
-    }
-);
-
-app.UseCors("AllowFrontend");
+app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 if (app.Environment.IsDevelopment())
 {
@@ -117,8 +82,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
 app.Run();
