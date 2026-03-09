@@ -20,23 +20,23 @@ namespace FormulariosAPI.Services
 
         public IEnumerable<FormDto> GetAll()
         {
-            return _context.Forms
-                .Select(f => new FormDto
+            return _context
+                .Forms.Select(f => new FormDto
                 {
                     Id = f.Id,
                     Name = f.Name,
                     SchemaJson = f.SchemaJson,
                     AreaId = f.AreaId,
                     AreaName = f.Area != null ? f.Area.Name : "General",
-                    IsPublished = f.IsPublished
+                    IsPublished = f.IsPublished,
                 })
                 .ToList();
         }
 
         public IEnumerable<FormDto> GetByArea(Guid areaId)
         {
-            return _context.Forms
-                .Where(f => f.AreaId == areaId)
+            return _context
+                .Forms.Where(f => f.AreaId == areaId)
                 .Select(f => new FormDto
                 {
                     Id = f.Id,
@@ -44,15 +44,15 @@ namespace FormulariosAPI.Services
                     SchemaJson = f.SchemaJson,
                     AreaId = f.AreaId,
                     AreaName = f.Area != null ? f.Area.Name : "General",
-                    IsPublished = f.IsPublished
+                    IsPublished = f.IsPublished,
                 })
                 .ToList();
         }
 
         public FormDto? GetById(Guid id)
         {
-            return _context.Forms
-                .Where(f => f.Id == id)
+            return _context
+                .Forms.Where(f => f.Id == id)
                 .Select(f => new FormDto
                 {
                     Id = f.Id,
@@ -60,7 +60,7 @@ namespace FormulariosAPI.Services
                     SchemaJson = f.SchemaJson,
                     AreaId = f.AreaId,
                     AreaName = f.Area != null ? f.Area.Name : "General",
-                    IsPublished = f.IsPublished
+                    IsPublished = f.IsPublished,
                 })
                 .FirstOrDefault();
         }
@@ -73,11 +73,11 @@ namespace FormulariosAPI.Services
                 Name = createDto.Name,
                 SchemaJson = createDto.SchemaJson,
                 AreaId = createDto.AreaId,
-                IsPublished = false
+                IsPublished = true,
             };
             _context.Forms.Add(form);
             _context.SaveChanges();
-            
+
             // Return with populated AreaName
             return GetById(form.Id)!;
         }
@@ -85,14 +85,15 @@ namespace FormulariosAPI.Services
         public FormDto? Update(Guid id, FormCreateDto updateDto)
         {
             var form = _context.Forms.FirstOrDefault(f => f.Id == id);
-            if (form == null) return null;
+            if (form == null)
+                return null;
 
             form.Name = updateDto.Name;
             form.SchemaJson = updateDto.SchemaJson;
             form.AreaId = updateDto.AreaId;
 
             _context.SaveChanges();
-            
+
             // Re-fetch to get Area Name and all relations
             return GetById(id);
         }
@@ -100,8 +101,9 @@ namespace FormulariosAPI.Services
         public bool Publish(Guid id)
         {
             var form = _context.Forms.FirstOrDefault(f => f.Id == id);
-            if (form == null) return false;
-            
+            if (form == null)
+                return false;
+
             form.IsPublished = true;
             _context.SaveChanges();
             return true;
@@ -110,13 +112,14 @@ namespace FormulariosAPI.Services
         public bool Delete(Guid id)
         {
             var form = _context.Forms.FirstOrDefault(f => f.Id == id);
-            if (form == null) return false;
-            
+            if (form == null)
+                return false;
+
             var cargas = _context.Cargas.Where(c => c.FormId == id).ToList();
             var cargaIds = cargas.Select(c => c.Id).ToList();
             var adjuntos = _context.Adjuntos.Where(a => cargaIds.Contains(a.CargaId)).ToList();
             var plantillas = _context.Plantillas.Where(p => p.FormId == id).ToList();
-            
+
             _context.Adjuntos.RemoveRange(adjuntos);
             _context.Cargas.RemoveRange(cargas);
             _context.Plantillas.RemoveRange(plantillas);
@@ -133,8 +136,14 @@ namespace FormulariosAPI.Services
                 Name = f.Name,
                 SchemaJson = f.SchemaJson,
                 AreaId = f.AreaId,
-                AreaName = f.Area?.Name ?? (f.AreaId != Guid.Empty ? $"Área ({f.AreaId.ToString().Substring(0,8)})" : "General"),
-                IsPublished = f.IsPublished
+                AreaName =
+                    f.Area?.Name
+                    ?? (
+                        f.AreaId != Guid.Empty
+                            ? $"Área ({f.AreaId.ToString().Substring(0, 8)})"
+                            : "General"
+                    ),
+                IsPublished = f.IsPublished,
             };
         }
     }

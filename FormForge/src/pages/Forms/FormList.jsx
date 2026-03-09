@@ -70,30 +70,46 @@ export const FormList = () => {
             ) : (
                 <div className={styles.grid}>
                     {forms.map((form) => (
-                        <div key={form.id || form._id} className={styles.card}>
+                        <div key={form.id} className={styles.card}>
                             <div className={styles.cardHeader}>
-                                <h3 className={styles.formName}>{form.name || form.title || 'Sin nombre'}</h3>
-                                <Badge variant={form.published ? 'warning' : 'primary'}>
-                                    {form.published ? 'Publicado' : 'Borrador'}
+                                <h3 className={styles.formName}>{form.name || 'Sin nombre'}</h3>
+                                <Badge variant={form.isPublished ? 'success' : 'warning'}>
+                                    {form.isPublished ? 'Publicado' : 'Borrador'}
                                 </Badge>
                             </div>
                             <p className={styles.areaInfo}>Área: {form.areaName || 'General'}</p>
 
                             <div className={styles.cardActions}>
+                                {role === 'Admin' && !form.isPublished && (
+                                    <Button
+                                        variant="success"
+                                        onClick={async () => {
+                                            try {
+                                                await formsApi.publish(form.id);
+                                                toast.success('Formulario publicado');
+                                                fetchForms();
+                                            } catch {
+                                                toast.error('Error al publicar');
+                                            }
+                                        }}
+                                    >
+                                        <Play size={16} /> Publicar
+                                    </Button>
+                                )}
                                 {role === 'Admin' && (
-                                    <Button variant="danger" onClick={() => handleDelete(form.id || form._id)}>
+                                    <Button variant="danger" onClick={() => handleDelete(form.id)}>
                                         <Trash2 size={16} /> Eliminar
                                     </Button>
                                 )}
                                 {(role === 'Admin' || role === 'Manager') && (
-                                    <Button variant="ghost" onClick={() => navigate(`/forms/${form.id || form._id}/edit`)}>
+                                    <Button variant="ghost" onClick={() => navigate(`/forms/${form.id}/edit`)}>
                                         <FileEdit size={16} /> Editar
                                     </Button>
                                 )}
-                                <Button variant="ghost" onClick={() => navigate(`/forms/${form.id || form._id}/responses`)}>
+                                <Button variant="ghost" onClick={() => navigate(`/forms/${form.id}/responses`)}>
                                     <Eye size={16} /> Respuestas
                                 </Button>
-                                <Button variant="primary" onClick={() => navigate(`/forms/${form.id || form._id}/fill`)}>
+                                <Button variant="primary" onClick={() => navigate(`/forms/${form.id}/fill`)}>
                                     <Play size={16} /> Llenar
                                 </Button>
                             </div>

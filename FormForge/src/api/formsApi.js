@@ -24,5 +24,9 @@ export const formsApi = {
     delete: async (id) => {
         const response = await axiosInstance.delete(`/api/forms/${id}`);
         return response.data;
+    },
+    publish: async (id) => {
+        const response = await axiosInstance.patch(`/api/forms/${id}/publish`);
+        return response.data;
     }
 };
