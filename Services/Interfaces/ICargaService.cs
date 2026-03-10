@@ -11,5 +11,7 @@ namespace FormulariosAPI.Services.Interfaces
         IEnumerable<CargaDto> GetByArea(Guid areaId);
         CargaDto? GetById(Guid id);
         CargaDto Create(CargaCreateDto createDto);
+        bool Delete(Guid id);
+        CargaDto? Update(Guid id, CargaCreateDto updateDto);
     }
 }

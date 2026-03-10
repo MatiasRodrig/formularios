@@ -35,7 +35,8 @@ namespace FormulariosAPI.Controllers
         public ActionResult<CargaDto> GetById(Guid id)
         {
             var carga = _cargaService.GetById(id);
-            if (carga == null) return NotFound();
+            if (carga == null)
+                return NotFound();
             return Ok(carga);
         }
 
@@ -44,6 +45,24 @@ namespace FormulariosAPI.Controllers
         {
             var carga = _cargaService.Create(dto);
             return CreatedAtAction(nameof(GetById), new { id = carga.Id }, carga);
+        }
+
+        [HttpDelete("{id}")]
+        public ActionResult Delete(Guid id)
+        {
+            var success = _cargaService.Delete(id);
+            if (!success)
+                return NotFound();
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public ActionResult<CargaDto> Update(Guid id, [FromBody] CargaCreateDto dto)
+        {
+            var carga = _cargaService.Update(id, dto);
+            if (carga == null)
+                return NotFound();
+            return Ok(carga);
         }
     }
 }
