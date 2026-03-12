@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../ui/Button/Button';
 import { Camera, Mic, Video, Trash2, Upload } from 'lucide-react';
 import styles from './FormRenderer.module.css'; // Reusing styles
+import axiosInstance from '../../api/axiosInstance';
 
 export const MediaField = ({ type, label, error, value, onChange, required, id }) => {
     const [loading, setLoading] = useState(false);
@@ -27,7 +28,7 @@ export const MediaField = ({ type, label, error, value, onChange, required, id }
         return undefined;
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
         const file = e.target.files[0];
         if (!file) {
             onChange(null);
@@ -35,21 +36,33 @@ export const MediaField = ({ type, label, error, value, onChange, required, id }
         }
 
         setLoading(true);
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            onChange({
-                dataUrl: reader.result,
-                name: file.name,
-                type: file.type,
-                size: file.size
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await axiosInstance.post('/api/upload', formData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
             });
+            
+            if (response.data && response.data.url) {
+                // Return the full URL for cross-platform compatibility
+                const fileUrl = import.meta.env.VITE_API_URL 
+                    ? import.meta.env.VITE_API_URL + response.data.url 
+                    : response.data.url;
+                
+                onChange({
+                    url: fileUrl,
+                    name: file.name,
+                    type: file.type,
+                    size: file.size
+                });
+            }
+        } catch (error) {
+            console.error('Error al subir archivo:', error);
+            alert('Error al subir el archivo');
+        } finally {
             setLoading(false);
-        };
-        reader.onerror = () => {
-            setLoading(false);
-            alert('Error al leer el archivo');
-        };
-        reader.readAsDataURL(file);
+        }
     };
 
     const handleClear = () => {
@@ -83,21 +96,21 @@ export const MediaField = ({ type, label, error, value, onChange, required, id }
                 ) : (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', width: '100%' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.75rem', background: 'var(--bg-card-hover)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-                            <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                {getIcon()} {value.name || 'Archivo multimedia'}
+                            <span style={{ fontSize: '0.875rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem', wordBreak: 'break-all' }}>
+                                {getIcon()} {typeof value === 'object' ? (value.name || 'Archivo multimedia') : 'Archivo subido'}
                             </span>
                             <Button variant="ghost" size="sm" type="button" onClick={handleClear} style={{ color: 'var(--accent-red)' }}>
                                 <Trash2 size={16} />
                             </Button>
                         </div>
-                        {type === 'photo' && value.dataUrl && (
-                            <img src={value.dataUrl} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }} />
+                        {type === 'photo' && (
+                            <img src={typeof value === 'object' ? (value.url || value.dataUrl) : value} alt="Preview" style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }} />
                         )}
-                        {type === 'audio' && value.dataUrl && (
-                            <audio controls src={value.dataUrl} style={{ width: '100%' }} />
+                        {type === 'audio' && (
+                            <audio controls src={typeof value === 'object' ? (value.url || value.dataUrl) : value} style={{ width: '100%' }} />
                         )}
-                        {type === 'video' && value.dataUrl && (
-                            <video controls src={value.dataUrl} style={{ width: '100%', maxHeight: '300px' }} />
+                        {type === 'video' && (
+                            <video controls src={typeof value === 'object' ? (value.url || value.dataUrl) : value} style={{ width: '100%', maxHeight: '300px' }} />
                         )}
                     </div>
                 )}

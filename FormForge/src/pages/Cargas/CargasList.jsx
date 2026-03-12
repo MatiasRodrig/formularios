@@ -9,7 +9,20 @@ import { Database, Eye, Download, Search, ChevronLeft, Calendar, FileText } from
 import { replaceVariables } from '../../utils/actaHelpers';
 import { pdf, Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import toast from 'react-hot-toast';
+import { MapContainer, TileLayer, Marker } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import iconRetina from 'leaflet/dist/images/marker-icon-2x.png';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 import styles from './CargasList.module.css';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: iconRetina,
+    iconUrl: iconUrl,
+    shadowUrl: shadowUrl
+});
 
 // Helper to extract fields from Form Schema
 const getFieldsFromSchema = (schemaJson) => {
@@ -516,7 +529,14 @@ export const CargasList = () => {
                                         <div key={i} className={styles.dataRow}>
                                             <span className={styles.dataLabel}>{f.label}</span>
                                             <span className={styles.dataValue}>
-                                                {renderFieldValue(val)}
+                                                {typeof val === 'object' && val !== null && typeof val.lat !== 'undefined' ? (
+                                                    <div style={{ height: '200px', width: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border-color)', marginTop: '0.5rem', zIndex: 0 }}>
+                                                        <MapContainer center={{ lat: val.lat, lng: val.lng }} zoom={16} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+                                                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
+                                                            <Marker position={{ lat: val.lat, lng: val.lng }} />
+                                                        </MapContainer>
+                                                    </div>
+                                                ) : renderFieldValue(val)}
                                             </span>
                                         </div>
                                     );
