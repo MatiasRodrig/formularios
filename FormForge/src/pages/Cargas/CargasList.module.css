@@ -327,3 +327,50 @@
     color: var(--text-primary);
     word-break: break-word;
 }
+
+.locationLink {
+    color: var(--accent-blue);
+    text-decoration: underline;
+}
+
+.mediaPreview {
+    margin-top: 0.25rem;
+}
+
+.thumbnail {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease;
+}
+
+.thumbnail:hover {
+    transform: scale(1.05);
+    border-color: var(--accent-blue);
+}
+
+.fileLink {
+    color: var(--accent-blue);
+    text-decoration: underline;
+    font-size: 0.8125rem;
+}
+
+.modalMapContainer {
+    height: 250px;
+    width: 100%;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    margin-top: 0.5rem;
+    position: relative;
+    z-index: 0;
+}
+
+.modalMap {
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+}

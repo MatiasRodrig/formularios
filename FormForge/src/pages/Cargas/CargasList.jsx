@@ -245,10 +245,16 @@ export const CargasList = () => {
                 let cellValue = parsedFn[f.id];
                 if (cellValue === undefined || cellValue === null) cellValue = '';
 
-                if (typeof cellValue === 'object' && cellValue.lat) {
-                    cellValue = `${cellValue.lat}, ${cellValue.lng}`;
+                if (typeof cellValue === 'object' && cellValue !== null) {
+                    const lat = cellValue.latitude ?? cellValue.lat;
+                    const lng = cellValue.longitude ?? cellValue.lng;
+                    if (lat !== undefined && lng !== undefined) {
+                        cellValue = `${lat}, ${lng}`;
+                    } else {
+                        cellValue = JSON.stringify(cellValue);
+                    }
                 } else if (typeof cellValue === 'string' && cellValue.startsWith('/uploads/')) {
-                    cellValue = `http://localhost:5240${cellValue}`; // absolute
+                    cellValue = getBaseUrl() + cellValue; // ✅ URL absoluta correcta
                 }
 
                 dataObj[f.variableName] = String(cellValue);
@@ -279,26 +285,61 @@ export const CargasList = () => {
     };
 
 
+    const getBaseUrl = () => {
+        const url = import.meta.env.VITE_API_URL || 'http://192.168.27.113:5023';
+        return url.endsWith('/') ? url.slice(0, -1) : url;
+    };
+
     const renderFieldValue = (value) => {
         if (value === null || value === undefined || value === '') return <span className={styles.mono}>-</span>;
 
-        // Maps
-        if (typeof value === 'object' && value.lat) {
+        // 1. Ubicación (latitude/longitude o lat/lng) 
+        const isLoc = typeof value === 'object' && 
+            ((value.latitude !== undefined && value.longitude !== undefined) || 
+             (value.lat !== undefined && value.lng !== undefined));
+
+        if (isLoc) {
+            const lat = value.latitude ?? value.lat;
+            const lng = value.longitude ?? value.lng;
             return (
-                <a href={`https://maps.google.com/?q=${value.lat},${value.lng}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-blue)', textDecoration: 'underline' }}>
-                    {value.lat.toFixed(4)}, {value.lng.toFixed(4)}
+                <a 
+                    href={`https://maps.google.com/?q=${lat},${lng}`} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className={styles.locationLink}
+                >
+                    📍 {parseFloat(lat).toFixed(4)}, {parseFloat(lng).toFixed(4)}
                 </a>
             );
         }
 
-        // Display files (from local storage)
-        if (typeof value === 'string' && value.startsWith('/uploads/')) {
+        // 2. Archivos multimedia (Fotos/Videos)
+        if (typeof value === 'string' && (value.startsWith('/uploads/') || value.startsWith('http'))) {
+            const uri = value.startsWith('/uploads/') ? getBaseUrl() + value : value;
+            const isImg = value.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+            
+            if (isImg) {
+                return (
+                    <div className={styles.mediaPreview}>
+                        <img 
+                            src={uri} 
+                            alt="Carga" 
+                            className={styles.thumbnail} 
+                            onClick={(e) => { e.stopPropagation(); window.open(uri, '_blank'); }}
+                        />
+                    </div>
+                );
+            }
+
             return (
-                <a href={`http://localhost:5240${value}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-blue)', textDecoration: 'underline' }}>
-                    Ver Archivo
+                <a href={uri} target="_blank" rel="noopener noreferrer" className={styles.fileLink}>
+                    📁 Ver Archivo
                 </a>
             );
         }
+
+        // 3. Objetos genéricos
+        if (typeof value === 'object') return JSON.stringify(value);
 
         return String(value);
     };
@@ -524,16 +565,24 @@ export const CargasList = () => {
                                     let cData = {};
                                     try { cData = JSON.parse(selectedCarga.dataJson); } catch { }
                                     const val = cData[f.id];
+                                    
+                                    const hasCoords = val && typeof val === 'object' && 
+                                        ((val.latitude !== undefined && val.longitude !== undefined) || 
+                                         (val.lat !== undefined && val.lng !== undefined));
 
                                     return (
                                         <div key={i} className={styles.dataRow}>
                                             <span className={styles.dataLabel}>{f.label}</span>
                                             <span className={styles.dataValue}>
-                                                {typeof val === 'object' && val !== null && typeof val.lat !== 'undefined' ? (
-                                                    <div style={{ height: '200px', width: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--border-color)', marginTop: '0.5rem', zIndex: 0 }}>
-                                                        <MapContainer center={{ lat: val.lat, lng: val.lng }} zoom={16} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+                                                {hasCoords ? (
+                                                    <div className={styles.modalMapContainer}>
+                                                        <MapContainer 
+                                                            center={{ lat: val.latitude ?? val.lat, lng: val.longitude ?? val.lng }} 
+                                                            zoom={16} 
+                                                            className={styles.modalMap}
+                                                        >
                                                             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
-                                                            <Marker position={{ lat: val.lat, lng: val.lng }} />
+                                                            <Marker position={{ lat: val.latitude ?? val.lat, lng: val.longitude ?? val.lng }} />
                                                         </MapContainer>
                                                     </div>
                                                 ) : renderFieldValue(val)}
