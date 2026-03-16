@@ -162,3 +162,6 @@ C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.
 C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.0\FormForge\package.json
 C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.0\OpenAPIDoc.v1.json
 C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\obj\Debug\net10.0\FormulariosAPI.sourcelink.json
+C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.0\formulariosmovil\app.json
+C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.0\formulariosmovil\package-lock.json
+C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.0\formulariosmovil\package.json

@@ -13,7 +13,7 @@ namespace FormulariosAPI.Controllers
     public class UploadController : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> Upload(IFormFile file)
+        public async Task<IActionResult> Upload([FromForm] IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
