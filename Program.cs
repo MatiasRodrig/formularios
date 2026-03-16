@@ -73,6 +73,13 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
+// Ensure uploads directory exists at startup so UseStaticFiles() can serve uploaded images
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+}
+
 app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 if (app.Environment.IsDevelopment())
