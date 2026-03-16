@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FormulariosAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/upload")]
     [Authorize]
     public class UploadController : ControllerBase
     {

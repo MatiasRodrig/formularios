@@ -253,8 +253,9 @@ export const CargasList = () => {
                     } else {
                         cellValue = JSON.stringify(cellValue);
                     }
-                } else if (typeof cellValue === 'string' && cellValue.startsWith('/uploads/')) {
-                    cellValue = getBaseUrl() + cellValue; // ✅ URL absoluta correcta
+                } else if (typeof cellValue === 'string' && cellValue.includes('/uploads/')) {
+                    const fileName = cellValue.split('/uploads/').pop();
+                    cellValue = `${getBaseUrl()}/uploads/${fileName}`; // ✅ Resiliente a cambios de IP
                 }
 
                 dataObj[f.variableName] = String(cellValue);
@@ -290,7 +291,7 @@ export const CargasList = () => {
         return url.endsWith('/') ? url.slice(0, -1) : url;
     };
 
-    const renderFieldValue = (value) => {
+    const renderFieldValue = (value, isModal = false) => {
         if (value === null || value === undefined || value === '') return <span className={styles.mono}>-</span>;
 
         // 1. Ubicación (latitude/longitude o lat/lng) 
@@ -314,23 +315,71 @@ export const CargasList = () => {
         }
 
         // 2. Archivos multimedia (Fotos/Videos)
+        const isLocalUri = (v) => {
+            if (typeof v !== 'string') return false;
+            const low = v.toLowerCase();
+            return (low.includes('file://') || low.includes('content://')) && !low.startsWith('http');
+        };
+
+        const checkIsImg = (v) => {
+            if (typeof v === 'string') {
+                const lowerV = v.toLowerCase();
+                return lowerV.includes('/uploads/') ||
+                       lowerV.startsWith('http') ||
+                       lowerV.startsWith('file://') ||
+                       lowerV.startsWith('content://') ||
+                       lowerV.startsWith('data:image/') ||
+                       lowerV.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+            }
+            if (v && typeof v === 'object' && v.uri) return checkIsImg(v.uri);
+            return false;
+        };
+
+        const isImg = checkIsImg(value);
+        const isImgArray = Array.isArray(value) && value.length > 0 && value.every(v => checkIsImg(v));
+
+        if (isImg || isImgArray) {
+            const imgList = isImgArray ? value : [value];
+            return (
+                <div className={styles.mediaPreview} style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {imgList.map((item, idx) => {
+                        let rawUri = typeof item === 'string' ? item : (item.uri || item.url);
+                        
+                        // URIs locales del móvil: no accesibles desde el navegador
+                        if (isLocalUri(rawUri)) {
+                            return (
+                                <span key={idx} style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontStyle: 'italic' }}>
+                                    📷 Archivo local (no disponible en web)
+                                </span>
+                            );
+                        }
+
+                        // Normalizar URL: Si contiene /uploads/, forzamos el uso del getBaseUrl() actual
+                        // Esto arregla casos donde se guardó con una IP vieja o dominio incorrecto.
+                        let uri = rawUri;
+                        if (rawUri.includes('/uploads/')) {
+                            const fileName = rawUri.split('/uploads/').pop();
+                            uri = `${getBaseUrl()}/uploads/${fileName}`;
+                        }
+
+                        return (
+                            <img
+                                key={idx}
+                                src={uri}
+                                alt={`Carga ${idx}`}
+                                className={isModal ? styles.modalImage : styles.thumbnail}
+                                onClick={(e) => { e.stopPropagation(); window.open(uri, '_blank'); }}
+                                title="Click para ver en grande"
+                            />
+                        );
+                    })}
+                </div>
+            );
+        }
+
+        // 3. Fallback para otros archivos (si no es imagen)
         if (typeof value === 'string' && (value.startsWith('/uploads/') || value.startsWith('http'))) {
             const uri = value.startsWith('/uploads/') ? getBaseUrl() + value : value;
-            const isImg = value.match(/\.(jpg|jpeg|png|gif|webp)$/i);
-            
-            if (isImg) {
-                return (
-                    <div className={styles.mediaPreview}>
-                        <img 
-                            src={uri} 
-                            alt="Carga" 
-                            className={styles.thumbnail} 
-                            onClick={(e) => { e.stopPropagation(); window.open(uri, '_blank'); }}
-                        />
-                    </div>
-                );
-            }
-
             return (
                 <a href={uri} target="_blank" rel="noopener noreferrer" className={styles.fileLink}>
                     📁 Ver Archivo
@@ -338,7 +387,7 @@ export const CargasList = () => {
             );
         }
 
-        // 3. Objetos genéricos
+        // 4. Objetos genéricos
         if (typeof value === 'object') return JSON.stringify(value);
 
         return String(value);
@@ -545,10 +594,17 @@ export const CargasList = () => {
                 <div className={styles.modalOverlay} onClick={() => setSelectedCarga(null)}>
                     <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
                         <div className={styles.modalTitle}>
-                            Detalle de Registro
-                            <span className={styles.mono} style={{ display: 'block', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-                                ID: {selectedCarga.id || selectedCarga._id}
-                            </span>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div>
+                                    <h2 style={{ margin: 0, fontSize: '1.5rem' }}>{activeForm?.name || 'Detalle de Registro'}</h2>
+                                    <span className={styles.mono} style={{ display: 'block', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+                                        ID: {selectedCarga.id || selectedCarga._id}
+                                    </span>
+                                </div>
+                                <Button variant="ghost" size="sm" onClick={() => setSelectedCarga(null)} style={{ padding: '0.25rem' }}>
+                                    ✕
+                                </Button>
+                            </div>
                         </div>
                         <div className={styles.modalBody}>
                             <div className={styles.normalizedData}>
@@ -580,12 +636,16 @@ export const CargasList = () => {
                                                             center={{ lat: val.latitude ?? val.lat, lng: val.longitude ?? val.lng }} 
                                                             zoom={16} 
                                                             className={styles.modalMap}
+                                                            scrollWheelZoom={false}
                                                         >
                                                             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
                                                             <Marker position={{ lat: val.latitude ?? val.lat, lng: val.longitude ?? val.lng }} />
                                                         </MapContainer>
+                                                        <div style={{ padding: '0.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)', textAlign: 'center' }}>
+                                                            📍 {val.latitude ?? val.lat}, {val.longitude ?? val.lng}
+                                                        </div>
                                                     </div>
-                                                ) : renderFieldValue(val)}
+                                                ) : renderFieldValue(val, true)}
                                             </span>
                                         </div>
                                     );

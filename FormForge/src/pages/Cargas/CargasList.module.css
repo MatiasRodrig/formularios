@@ -374,3 +374,22 @@
     width: 100%;
     z-index: 0;
 }
+
+.modalImage {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: transform 0.2s ease;
+    background-color: var(--bg-body);
+}
+
+.modalImage:hover {
+    transform: scale(1.01);
+    border-color: var(--accent-blue);
+}
