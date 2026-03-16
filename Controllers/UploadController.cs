@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace FormulariosAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/upload")]
     [Authorize]
     public class UploadController : ControllerBase
     {
         [HttpPost]
-        public async Task<IActionResult> Upload([FromForm] IFormFile file)
+        public async Task<IActionResult> Upload([FromForm(Name = "file")] IFormFile file)
         {
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
