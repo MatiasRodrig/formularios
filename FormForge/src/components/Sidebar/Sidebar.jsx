@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Folder, FormInput, Database, FileText, LogOut, Users } from 'lucide-react';
+import { LayoutDashboard, Folder, FormInput, Database, FileText, LogOut, Users, Contact } from 'lucide-react';
 import styles from './Sidebar.module.css';
 import { useAuthStore } from '../../store/authStore';
 
@@ -42,6 +42,13 @@ export const Sidebar = () => {
                     <NavLink to="/cargas" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
                         <Database size={20} />
                         <span>Cargas</span>
+                    </NavLink>
+                )}
+
+                {(role === 'Admin' || role === 'Manager') && (
+                    <NavLink to="/profiles" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
+                        <Contact size={20} />
+                        <span>Perfiles</span>
                     </NavLink>
                 )}
 

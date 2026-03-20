@@ -50,7 +50,6 @@ export const FormBuilderPage = () => {
             try {
                 const data = await areasApi.getAll();
                 setAreas(data || []);
-                // Manager tiene área fija: preseleccionarla desde el token
                 if (role === 'Manager') {
                     const managerAreaId = user?.AreaId || user?.areaId;
                     if (managerAreaId) setAreaId(managerAreaId);
@@ -69,7 +68,9 @@ export const FormBuilderPage = () => {
             ...fieldData,
             id: generateUUID(),
             label: fieldData.label,
-            variableName: `var_${Date.now()}`
+            variableName: `var_${Date.now()}`,
+            isTitleField: false,
+            isProfileKey: false,
         };
         setFields((prev) => [...prev, newField]);
         setSelectedField(newField);
@@ -141,7 +142,13 @@ export const FormBuilderPage = () => {
         if (!selectedField) {
             return <div className={styles.emptyConfig}>Seleccione un campo para configurarlo</div>;
         }
-        return <FieldConfig field={selectedField} onUpdate={handleUpdateField} />;
+        return (
+            <FieldConfig
+                field={selectedField}
+                onUpdate={handleUpdateField}
+                allFields={fields}
+            />
+        );
     };
 
     return (

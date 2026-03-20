@@ -15,6 +15,7 @@ import { ActasList } from '../pages/Actas/ActasList';
 import { ActaTemplateEditor } from '../pages/Actas/ActaTemplateEditor';
 import { ActaPreview } from '../pages/Actas/ActaPreview';
 import { Users } from '../pages/Users/Users';
+import { Profiles } from '../pages/Profiles/Profiles';
 
 export const AppRouter = () => {
     return (
@@ -44,12 +45,17 @@ export const AppRouter = () => {
                             <Route path="/forms/:id/edit" element={<FormBuilderPage />} />
                         </Route>
 
-                        {/* Form list visible by collector too to find forms to fill */}
+                        {/* Forms */}
                         <Route path="/forms" element={<FormList />} />
                         <Route path="/forms/:id/fill" element={<FormFill />} />
-                        {/* Using CargasList as a quick response viewer placeholder */}
                         <Route path="/forms/:id/responses" element={<CargasList />} />
 
+                        {/* Profiles — visible for Admin and Manager */}
+                        <Route element={<ProtectedRoute allowedRoles={['Admin', 'Manager']} />}>
+                            <Route path="/profiles" element={<Profiles />} />
+                        </Route>
+
+                        {/* Actas */}
                         <Route path="/actas" element={<ActasList />} />
                         <Route path="/actas/new" element={<ActaTemplateEditor />} />
                         <Route path="/actas/:id/edit" element={<ActaTemplateEditor />} />

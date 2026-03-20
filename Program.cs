@@ -22,12 +22,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
+// ─── Services ─────────────────────────────────────────────────────────────────
 builder.Services.AddScoped<IAreaService, AreaService>();
 builder.Services.AddScoped<IFormService, FormService>();
 builder.Services.AddScoped<ICargaService, CargaService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IProfileService, ProfileService>(); // ← NEW
 
+// ─── JWT ──────────────────────────────────────────────────────────────────────
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "ClaveSuperSecretaDePrueba1234567890!!";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "MyAppAPI";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "MyAppClients";
@@ -73,7 +76,7 @@ builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
-// Ensure uploads directory exists at startup so UseStaticFiles() can serve uploaded images
+// Ensure uploads directory exists
 Console.WriteLine($"WebRootPath is: {builder.Environment.WebRootPath ?? "NULL"}");
 var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads");
 if (!Directory.Exists(uploadsPath))
@@ -90,17 +93,21 @@ if (app.Environment.IsDevelopment())
 }
 
 var wwwrootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(wwwrootPath),
-    RequestPath = ""
-});
+app.UseStaticFiles(
+    new StaticFileOptions
+    {
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(wwwrootPath),
+        RequestPath = "",
+    }
+);
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
-    RequestPath = "/uploads"
-});
+app.UseStaticFiles(
+    new StaticFileOptions
+    {
+        FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+        RequestPath = "/uploads",
+    }
+);
 
 app.UseAuthentication();
 app.UseAuthorization();
