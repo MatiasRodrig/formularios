@@ -165,3 +165,6 @@ C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\obj\Debug\net10.
 C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.0\formulariosmovil\app.json
 C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.0\formulariosmovil\package-lock.json
 C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.0\formulariosmovil\package.json
+C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\bin\Debug\net10.0\FormulariosAPI.staticwebassets.runtime.json
+C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\obj\Debug\net10.0\compressed\j2h27x9ad6-{0}-1ata7vuvg4-1ata7vuvg4.gz
+C:\Users\matias.rodriguez\Desktop\formulariosapi\FormulariosAPI\obj\Debug\net10.0\compressed\xalwdo6fqt-{0}-rzuvwh0jlb-rzuvwh0jlb.gz

@@ -26,7 +26,7 @@ export const Sidebar = () => {
                     <span>Dashboard</span>
                 </NavLink>
 
-                {(role === 'Admin' || role === 'Manager') && (
+                {role === 'Admin' && (
                     <NavLink to="/areas" className={({ isActive }) => `${styles.navItem} ${isActive ? styles.active : ''}`}>
                         <Folder size={20} />
                         <span>Áreas</span>

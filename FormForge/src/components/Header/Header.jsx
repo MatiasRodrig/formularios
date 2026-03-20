@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styles from './Header.module.css';
 import { useAuthStore } from '../../store/authStore';
 import { User, Key } from 'lucide-react';
-import { usersApi } from '../../api/usersApi';
+import { usersApi } from '../../api';
 import toast from 'react-hot-toast';
 import { Spinner } from '../ui/Spinner/Spinner';
 

@@ -1,8 +1,7 @@
 // FormFill.jsx — handleSubmit corregido
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { formsApi } from '../../api/formsApi';
-import { cargasApi } from '../../api/cargasApi';
+import { formsApi, cargasApi } from '../../api';
 import { FormRenderer } from '../../components/FormRenderer/FormRenderer';
 import { Button } from '../../components/ui/Button/Button';
 import { Spinner } from '../../components/ui/Spinner/Spinner';

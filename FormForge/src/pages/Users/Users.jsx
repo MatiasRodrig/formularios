@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { usersApi } from '../../api/usersApi';
-import { areasApi } from '../../api/areasApi';
+import { usersApi, areasApi } from '../../api';
 import { Spinner } from '../../components/ui/Spinner/Spinner';
 import toast from 'react-hot-toast';
 import { Trash2, UserPlus, Users as UsersIcon, ShieldCheck, Briefcase, User, Search, Edit2 } from 'lucide-react';

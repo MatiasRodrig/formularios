@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { areasApi } from '../../api/areasApi';
+import { areasApi } from '../../api';
 import { Button } from '../../components/ui/Button/Button';
 import { Spinner } from '../../components/ui/Spinner/Spinner';
 import { Modal } from '../../components/ui/Modal/Modal';

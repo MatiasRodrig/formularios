@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+const rawBaseURL = import.meta.env.VITE_API_URL || 'http://localhost:5023';
+export const API_URL = rawBaseURL.endsWith('/') ? rawBaseURL.slice(0, -1) : rawBaseURL;
+
 const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://192.168.27.113:5023',
+    baseURL: API_URL,
 });
 
 console.log(import.meta.env.VITE_API_URL)

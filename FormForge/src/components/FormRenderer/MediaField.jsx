@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '../ui/Button/Button';
 import { Camera, Mic, Video, Trash2, Upload } from 'lucide-react';
 import styles from './FormRenderer.module.css'; // Reusing styles
-import axiosInstance from '../../api/axiosInstance';
+import { uploadApi, API_URL } from '../../api';
 
 export const MediaField = ({ type, label, error, value, onChange, required, id }) => {
     const [loading, setLoading] = useState(false);
@@ -37,18 +37,11 @@ export const MediaField = ({ type, label, error, value, onChange, required, id }
 
         setLoading(true);
         try {
-            const formData = new FormData();
-            formData.append('file', file);
+            const data = await uploadApi.upload(file);
             
-            const response = await axiosInstance.post('/api/upload', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-            });
-            
-            if (response.data && response.data.url) {
-                // Return the full URL for cross-platform compatibility
-                const fileUrl = import.meta.env.VITE_API_URL 
-                    ? import.meta.env.VITE_API_URL + response.data.url 
-                    : response.data.url;
+            if (data && data.url) {
+                // Use centralized API_URL
+                const fileUrl = data.url.startsWith('http') ? data.url : `${API_URL}${data.url}`;
                 
                 onChange({
                     url: fileUrl,

@@ -3,7 +3,7 @@ import { useAuthStore } from '../../store/authStore';
 import styles from './Dashboard.module.css';
 import { FormInput, FileText, Database, Folder } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { dashboardApi } from '../../api/dashboardApi';
+import { dashboardApi } from '../../api';
 import { Spinner } from '../../components/ui/Spinner/Spinner';
 
 export const Dashboard = () => {

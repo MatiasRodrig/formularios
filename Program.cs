@@ -74,7 +74,8 @@ builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Ensure uploads directory exists at startup so UseStaticFiles() can serve uploaded images
-var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+Console.WriteLine($"WebRootPath is: {builder.Environment.WebRootPath ?? "NULL"}");
+var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads");
 if (!Directory.Exists(uploadsPath))
 {
     Directory.CreateDirectory(uploadsPath);
@@ -88,7 +89,18 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseStaticFiles();
+var wwwrootPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(wwwrootPath),
+    RequestPath = ""
+});
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads"
+});
 
 app.UseAuthentication();
 app.UseAuthorization();

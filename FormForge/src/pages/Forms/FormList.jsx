@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { formsApi } from '../../api/formsApi';
+import { formsApi } from '../../api';
 import { Button } from '../../components/ui/Button/Button';
 import { Badge } from '../../components/ui/Badge/Badge';
 import { Spinner } from '../../components/ui/Spinner/Spinner';

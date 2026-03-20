@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { cargasApi } from '../../api/cargasApi';
-import { formsApi } from '../../api/formsApi';
-import { usersApi } from '../../api/usersApi';
+import { cargasApi, formsApi, usersApi, API_URL } from '../../api';
 import { Button } from '../../components/ui/Button/Button';
 import { Input } from '../../components/ui/Input/Input';
 import { Spinner } from '../../components/ui/Spinner/Spinner';
@@ -255,7 +253,7 @@ export const CargasList = () => {
                     }
                 } else if (typeof cellValue === 'string' && cellValue.includes('/uploads/')) {
                     const fileName = cellValue.split('/uploads/').pop();
-                    cellValue = `${getBaseUrl()}/uploads/${fileName}`; // ✅ Resiliente a cambios de IP
+                    cellValue = `${API_URL}/uploads/${fileName}`; // ✅ Resiliente a cambios de IP
                 }
 
                 dataObj[f.variableName] = String(cellValue);
@@ -286,10 +284,6 @@ export const CargasList = () => {
     };
 
 
-    const getBaseUrl = () => {
-        const url = import.meta.env.VITE_API_URL || 'http://192.168.27.113:5023';
-        return url.endsWith('/') ? url.slice(0, -1) : url;
-    };
 
     const renderFieldValue = (value, isModal = false) => {
         if (value === null || value === undefined || value === '') return <span className={styles.mono}>-</span>;
@@ -354,12 +348,12 @@ export const CargasList = () => {
                             );
                         }
 
-                        // Normalizar URL: Si contiene /uploads/, forzamos el uso del getBaseUrl() actual
+                        // Normalizar URL: Si contiene /uploads/, forzamos el uso del API_URL actual
                         // Esto arregla casos donde se guardó con una IP vieja o dominio incorrecto.
                         let uri = rawUri;
                         if (rawUri.includes('/uploads/')) {
                             const fileName = rawUri.split('/uploads/').pop();
-                            uri = `${getBaseUrl()}/uploads/${fileName}`;
+                            uri = `${API_URL}/uploads/${fileName}`;
                         }
 
                         return (
@@ -379,7 +373,7 @@ export const CargasList = () => {
 
         // 3. Fallback para otros archivos (si no es imagen)
         if (typeof value === 'string' && (value.startsWith('/uploads/') || value.startsWith('http'))) {
-            const uri = value.startsWith('/uploads/') ? getBaseUrl() + value : value;
+            const uri = value.startsWith('/uploads/') ? API_URL + value : value;
             return (
                 <a href={uri} target="_blank" rel="noopener noreferrer" className={styles.fileLink}>
                     📁 Ver Archivo

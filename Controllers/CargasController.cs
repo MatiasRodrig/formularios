@@ -19,15 +19,34 @@ namespace FormulariosAPI.Controllers
             _cargaService = cargaService;
         }
 
+        private bool IsAdmin => User.IsInRole("Admin");
+        private Guid? UserAreaId 
+        {
+            get 
+            {
+                var claim = User.FindFirst("AreaId");
+                return claim != null && Guid.TryParse(claim.Value, out var id) ? id : null;
+            }
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<CargaDto>> GetAll()
         {
-            return Ok(_cargaService.GetAll());
+            if (IsAdmin)
+                return Ok(_cargaService.GetAll());
+            
+            if (UserAreaId.HasValue)
+                return Ok(_cargaService.GetByArea(UserAreaId.Value));
+                
+            return Ok(new List<CargaDto>());
         }
 
         [HttpGet("area/{areaId}")]
         public ActionResult<IEnumerable<CargaDto>> GetByArea(Guid areaId)
         {
+            if (!IsAdmin && UserAreaId != areaId)
+                return Forbid();
+
             return Ok(_cargaService.GetByArea(areaId));
         }
 
@@ -37,12 +56,19 @@ namespace FormulariosAPI.Controllers
             var carga = _cargaService.GetById(id);
             if (carga == null)
                 return NotFound();
+
+            if (!IsAdmin && carga.AreaId != UserAreaId)
+                return Forbid();
+
             return Ok(carga);
         }
 
         [HttpPost]
         public ActionResult<CargaDto> Create([FromBody] CargaCreateDto dto)
         {
+            if (!IsAdmin && dto.AreaId != UserAreaId)
+                return Forbid();
+
             var carga = _cargaService.Create(dto);
             return CreatedAtAction(nameof(GetById), new { id = carga.Id }, carga);
         }
@@ -50,6 +76,13 @@ namespace FormulariosAPI.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete(Guid id)
         {
+            var carga = _cargaService.GetById(id);
+            if (carga == null)
+                return NotFound();
+
+            if (!IsAdmin && carga.AreaId != UserAreaId)
+                return Forbid();
+
             var success = _cargaService.Delete(id);
             if (!success)
                 return NotFound();
@@ -59,6 +92,13 @@ namespace FormulariosAPI.Controllers
         [HttpPut("{id}")]
         public ActionResult<CargaDto> Update(Guid id, [FromBody] CargaCreateDto dto)
         {
+            var existingCarga = _cargaService.GetById(id);
+            if (existingCarga == null)
+                return NotFound();
+
+            if (!IsAdmin && (existingCarga.AreaId != UserAreaId || dto.AreaId != UserAreaId))
+                return Forbid();
+
             var carga = _cargaService.Update(id, dto);
             if (carga == null)
                 return NotFound();
